@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   # This is default
-  repository: 609208304138.dkr.ecr.ap-southeast-1.amazonaws.com/de-feed-service
+  repository: mrgin000/sebastiankun
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -37,20 +37,11 @@ ingress:
 
 app:
   env:
-    # TODO: a set of values for different environments
     NODE_ENV: development
     PORT: 3000
     AWS_DEFAULT_REGION: ap-southeast-1
   # AWS secrets for ecosystem app.
   # Often, it will be your release name (also means your app name) - de-awani-service
-  envSecrets:
-    de-feed-service-secrets:
-      - DB_URL
-      - DB_URL_READ
-      - DB_URL_TEST
-      - ES_CLOUD_ID
-      - ES_USERNAME
-      - ES_PASSWORD
   port: 3000
   health:
     path: "/health"
