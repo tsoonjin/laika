@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "sebastiankun.fullname" . }}
+  labels:
+    app: {{ template "sebastiankun.name" . }}
+    chart: {{ template "sebastiankun.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.service.httpPort }}
+      # Service need to know the App port
+      targetPort: {{ .Values.app.port }}
+      protocol: TCP
+
+  selector:
+    app: {{ template "sebastiankun.name" . }}
+    release: {{ .Release.Name }}

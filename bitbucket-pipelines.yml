@@ -27,6 +27,15 @@ definitions:
           - echo "Installing kubectl"
           - curl --silent --location -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.7/2020-07-08/bin/linux/amd64/kubectl &&
           - chmod +x /usr/local/bin/kubectl
+          - echo "Installing helm 3"
+          - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          - chmod 700 get_helm.sh
+          - ./get_helm.sh
+          - export release=sebastiankun
+          - export chart_path=helm/sebastiankun
+          - export values_files=helm/dev.yaml
+          - export values="replicaCount=1,image.tag=${BITBUCKET_BUILD_NUMBER}"
+          - export prefix=develop
           - export namespace=systems
           - export cluster_name=k8-de-nonprod.ap-southeast-1.eksctl.io
           - export apiserver_endpoint=https://6E950B8B1F943ADA007DCD435D7FFF11.gr7.ap-southeast-1.eks.amazonaws.com
@@ -34,7 +43,7 @@ definitions:
           - kubectl config set-credentials $sa --token=$sa_token
           - kubectl config set-context $namespace --cluster=$cluster_name --user=$sa
           - kubectl config use-context $namespace
-          - kubectl get pods -n $namespace
+          - helm upgrade --debug -i ${release} ${chart_path} -n ${namespace} -f ${values_files} --set ${values}
 
 pipelines:
   branches:

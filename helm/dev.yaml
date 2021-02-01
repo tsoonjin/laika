@@ -1,0 +1,13 @@
+ingress:
+  enabled: true
+  hosts:
+    - sebastiankun.eco.astro.com.my
+  annotations:
+    kubernetes.io/ingress.class: ingress-apps
+  tls:
+    - hosts:
+      - sebastiankun.eco.astro.com.my
+      secretName: tls-de-astro
+
+annotations:
+  iam.amazonaws.com/role: eco-service
