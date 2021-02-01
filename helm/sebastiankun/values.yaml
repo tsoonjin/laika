@@ -42,6 +42,9 @@ app:
     AWS_DEFAULT_REGION: ap-southeast-1
   # AWS secrets for ecosystem app.
   # Often, it will be your release name (also means your app name) - de-awani-service
+  envSecrets:
+    sebastiankun-secrets:
+      - DB_URL
   port: 3000
   health:
     path: "/health"

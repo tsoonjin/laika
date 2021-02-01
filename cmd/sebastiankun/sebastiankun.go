@@ -9,9 +9,14 @@ func slackChat(w http.ResponseWriter, r *http.Request) {
   fmt.Fprintf(w, "Are you ready to chat !!!")
 }
 
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+  fmt.Fprintf(w, "Are you ready to rumble ?")
+}
+
 
 func setupRoutes() {
-  http.HandleFunc("/", slackChat)
+  http.HandleFunc("/slack", slackChat)
+  http.HandleFunc("/", rootHandler)
 }
 
 func main() {
