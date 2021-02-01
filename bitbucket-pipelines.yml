@@ -1,0 +1,42 @@
+definitions:
+  caches:
+    gomodules: vendor
+  steps:
+    - step: &build-test
+        image: golang:1.14
+        caches:
+          - gomodules
+        name: Build & Test
+        script:
+          - if [ ! -d "vendor" ] || [ -z "$(ls -A vendor)" ]; then go mod vendor; fi
+          - go test -race ./...
+          - GOOS=linux GOARCH=amd64 go build -a -o /sebastiankun ./cmd/sebastiankun
+        artifacts:
+          - /sebastiankun
+    - step: &publish-img
+        name: Publish to Dockerhub
+        script:
+          - docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
+          - docker build -t ${DOCKERHUB_USERNAME}/${NAME}:${BITBUCKET_BUILD_NUMBER} .
+          - docker push ${DOCKERHUB_USERNAME}/${NAME}:${BITBUCKET_BUILD_NUMBER}
+    - step: &deploy-k8
+        name: Deploy to K8
+        script:
+          - echo "Installing kubectl"
+          - curl --silent --location -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.7/2020-07-08/bin/linux/amd64/kubectl &&
+          - chmod +x /usr/local/bin/kubectl
+          - export namespace=systems
+          - export cluster_name=k8-de-nonprod.ap-southeast-1.eksctl.io
+          - export apiserver_endpoint=https://6E950B8B1F943ADA007DCD435D7FFF11.gr7.ap-southeast-1.eks.amazonaws.com
+          - kubectl config set-cluster $cluster_name --server=$apiserver_endpoint --insecure-skip-tls-verify=true
+          - kubectl config set-credentials $sa --token=$sa_token
+          - kubectl config set-context $namespace --cluster=$cluster_name --user=$sa
+          - kubectl config use-context $namespace
+          - kubectl get pods -n $namespace
+
+pipelines:
+  branches:
+    project/sebastiankun:
+      - step: *build-test
+      - step: *publish-img
+      - step: *deploy-k8
