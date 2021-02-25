@@ -9,6 +9,8 @@ import (
 type Config struct {
     Env string
     Port string
+    Token string
+    Secret string
 }
 
 func LoadConfig() Config {
@@ -20,6 +22,7 @@ func LoadConfig() Config {
     config := Config {
         Env: "develop",
         Port: "4000",
+        Token: "",
     }
     env := os.Getenv("ENV")
     if env != "" {
@@ -28,6 +31,14 @@ func LoadConfig() Config {
     port := os.Getenv("PORT")
     if port != "" {
         config.Port = port
+    }
+    token := os.Getenv("BOT_TOKEN")
+    if token != "" {
+        config.Token = token
+    }
+    secret := os.Getenv("SECRET")
+    if secret != "" {
+        config.Secret = secret
     }
     return config
 }
