@@ -2,6 +2,8 @@ package lai
 
 import (
     "github.com/joho/godotenv"
+    "os"
+    "log"
 )
 
 type Config struct {
