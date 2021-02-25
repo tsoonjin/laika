@@ -1,4 +1,4 @@
-package lai
+package laika
 
 import (
     "github.com/joho/godotenv"
@@ -11,7 +11,7 @@ type Config struct {
     Port string
 }
 
-func loadConfig() Config {
+func LoadConfig() Config {
     if os.Getenv("ENV") != "production" {
         if err := godotenv.Load(); err != nil {
             log.Println("Failed to load .env file")
@@ -19,7 +19,7 @@ func loadConfig() Config {
     }
     config := Config {
         Env: "develop",
-        Port: "3000",
+        Port: "4000",
     }
     env := os.Getenv("ENV")
     if env != "" {
