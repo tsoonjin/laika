@@ -8,6 +8,7 @@ import (
     "encoding/json"
     "github.com/slack-go/slack"
     "github.com/tsoonjin/laika/core"
+    "github.com/tsoonjin/laika/core/handler"
 )
 
 
@@ -21,7 +22,9 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 
 func setupRoutes(config laika.Config, api *slack.Client) {
-    http.HandleFunc("/slack", func(w http.ResponseWriter, r *http.Request) {
+    http.HandleFunc("/slack/events", slackBot.EventHandler)
+    http.HandleFunc("/slack/interactive", slackBot.InteractionHandler)
+    http.HandleFunc("/slack/command", func(w http.ResponseWriter, r *http.Request) {
 
 		verifier, err := slack.NewSecretsVerifier(r.Header, config.Secret)
 		if err != nil {
@@ -43,7 +46,10 @@ func setupRoutes(config laika.Config, api *slack.Client) {
 
 		switch s.Command {
 		case "/lai":
-			params := &slack.Msg{Text: s.Text}
+			params := &slack.Msg{
+                Text: s.Text,
+                ResponseType: "in_channel",
+            }
 			b, err := json.Marshal(params)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
