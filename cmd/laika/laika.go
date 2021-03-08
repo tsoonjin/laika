@@ -1,6 +1,7 @@
 package main
 
 import (
+    "os"
     "fmt"
     "net/http"
     "io/ioutil"
@@ -8,6 +9,7 @@ import (
     "encoding/json"
     "github.com/slack-go/slack"
     "github.com/tsoonjin/laika/core"
+    "github.com/tsoonjin/laika/core/scripts/google"
     "github.com/tsoonjin/laika/core/handler"
 )
 
@@ -22,6 +24,12 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 
 func setupRoutes(config laika.Config, api *slack.Client) {
+    googleClient := google.Client{
+        Config: google.Config{
+            ApiKey: os.Getenv("PAGESPEED_INSIGHT_API_KEY"),
+        },
+    }
+    http.HandleFunc("/pagespeed", googleClient.Handler)
     http.HandleFunc("/slack/events", slackBot.EventHandler)
     http.HandleFunc("/slack/interactive", slackBot.InteractionHandler)
     http.HandleFunc("/slack/command", func(w http.ResponseWriter, r *http.Request) {
