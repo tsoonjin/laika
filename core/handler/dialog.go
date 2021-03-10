@@ -50,6 +50,7 @@ func InteractionHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch message.Type {
 	case slack.InteractionTypeInteractionMessage:
+        log.Println("Interactive Message")
 		// Make new dialog components and open a dialog.
 		// Component-Text
 		textInput := slack.NewTextInput("TextSample", "Sample label - Text", "Default value")
