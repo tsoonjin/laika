@@ -82,6 +82,7 @@ func InteractionHandler(w http.ResponseWriter, r *http.Request) {
 			SubmitLabel: "Submit",
 			Elements:    elements,
 		}
+        log.Println(message.TriggerID)
 		api.OpenDialog(message.TriggerID, dialog)
 
 	case slack.InteractionTypeDialogSubmission:
